@@ -1,10 +1,11 @@
 import { Router } from 'express';
 
-const router = Router();
+// Controllers
+import Auth from '../controllers/Auth';
 
-router.get('/', (req, res) => {
-  res.send("<h1>Wellcome to web server</h1>");
-})
+const router = new Router();
+
+router.get('/', Auth.home);
 
 
 export default router;
