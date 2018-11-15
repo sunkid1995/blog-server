@@ -1,6 +1,8 @@
-// const express = require('express');
-import express from 'express';
+// Set biến môi trường
+process.env.NODE_ENV = process.env.NODE_ENV || "development";
 
-const app = express();
+// Chuyển đổi code ES6 sang ES5 -> Tham khảo: https://babeljs.io/docs/usage/babel-register/
+require('babel-register');
 
-app.listen(3000, console.log('connected'));
+// connect app
+require('../app');
