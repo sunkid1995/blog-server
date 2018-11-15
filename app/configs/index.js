@@ -1,6 +1,8 @@
 import _ from 'lodash';
 
-// Các setting mặc định dùng cho tất cả các môi trường
+/**
+ * Các setting mặc định dùng cho tất cả các môi trường
+ */ 
 const defaultConfig = {
   env: process.env.NODE_ENV,
 
@@ -11,11 +13,22 @@ const defaultConfig = {
     }
   },
 
+  /**
+   * Cấu hình bảo mật liên quan đến session, authendication và mã hóa
+   */
+  security: {
+    sessionSecret: process.env.SESSION_SECRET || 'i-am-the-secret-key',
+    sessionExpiration: process.env.SESSION_EXPIRATION || 60 * 60 * 24 * 7, // 1 week
+    saltRounds: process.env.SALT_ROUNDS || 12,
+  },
+
   PORT: process.env.PORT || 8080,
   apiPrefix: '',
 }
 
-// Setting cho các môi trường cụ thể
+/* 
+ * Setting cho các môi trường cụ thể
+*/
 const envConfig = {
   development: { // Môi trường dev
     mongo: {
