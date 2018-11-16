@@ -14,5 +14,6 @@ router.get('/', auth.home);
  * @description user router
  */
 router.post('/create_user', userController.createUser);
+router.put('/update_user', userController.updateUser)
 
 export default router;
