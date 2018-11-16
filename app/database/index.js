@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import mongoose from 'mongoose';
 import config from '../configs';
 
@@ -9,7 +10,7 @@ mongoose.Promise = global.Promise;
 /**
  * @description  Kết nối database
  */
-mongoose.set('useCreateIndex', true)
+mongoose.set('useCreateIndex', true);
 mongoose.connect(config.mongo.uri, { useNewUrlParser: true });
 
 /**

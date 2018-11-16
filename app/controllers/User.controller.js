@@ -3,38 +3,39 @@
 import UserModel from '../models/UserModel';
 
 class UserController {
-   /**
+  /**
    * Tạo mới một user
    * @function asyn-await
-   * @param {req} -> thông tin yêu cầu của client gửi nên server
+   * @param {req} ->thông tin yêu cầu của client gửi nên server
    * @param {res} -> trả lời của server -> cho client
-   * @param {next} -> callback argument to the middleware function 
-   * @return {void} -> trả về thông tin user & token mới được khởi tạo thành công 
+   * @param {next} -> callback argument to the middleware function
+   * @return {void} -> trả về thông tin user & token mới được khởi tạo thành công
   */
-    createUser = async (req, res, next) => {
-        const { username, phone, email, password } = req.body;
 
-        const newUser = new UserModel({
-          username, phone, email, password
-        });
+  createUser = async (req, res, next) => {
+    const { username, phone, email, password } = req.body;
 
-        try {
-          const saveUser = await newUser.save();
-          const token = saveUser.getToken();
-          res.status(200).json({
-            success: true,
-            result: { token, user: saveUser },
-            message: 'Create user successfully!'
-          });
-        } catch (err) {
-          res.status(400).json({
-            success: false,
-            result: {},
-            message: `Error is: ${err}`
-          });
-          next(err);
-        }
+    const newUser = new UserModel({
+      username, phone, email, password,
+    });
+
+    try {
+      const saveUser = await newUser.save();
+      const token = saveUser.getToken();
+      res.status(200).json({
+        success: true,
+        result: { token, user: saveUser },
+        message: 'Create user successfully!',
+      });
+    } catch (err) {
+      res.status(400).json({
+        success: false,
+        result: {},
+        message: `Error is: ${err}`,
+      });
+      next(err);
     }
+  }
 
   /**
    * Cập nhật một user
@@ -42,9 +43,10 @@ class UserController {
    * @param {user_id} -> lấy ra user_id của user đó và update giá trị
    * @param {req} -> thông tin yêu cầu của client gửi nên server
    * @param {res} -> trả lời của server -> cho client
-   * @param {next} -> callback argument to the middleware function 
+   * @param {next} -> callback argument to the middleware function
    * @return {void} -> trả về thông tin user mới được cập nhật
    */
+
   updateUser = async (req, res, next) => {
     const { user_id, ...user } = req.body;
     if (!user_id) {
@@ -62,21 +64,20 @@ class UserController {
     */
     const optipons = { new: true };
     try {
-        const userUp = await UserModel.findByIdAndUpdate(user_id, {$set: user}, optipons);
-        res.status(200).json({
-          success: true,
-          result: { userUp },
-          message: 'Update user successfully!'
-        });
+      const userUp = await UserModel.findByIdAndUpdate(user_id, { $set: user }, optipons);
+      res.status(200).json({
+        success: true,
+        result: { user: userUp },
+        message: 'Update user successfully!',
+      });
     } catch (err) {
       res.status(400).json({
         success: false,
         result: {},
-        message: `Error is: ${err}`
+        message: `Error is: ${err}`,
       });
       next(err);
     }
   }
-
 }
 export default new UserController();

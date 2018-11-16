@@ -9,12 +9,12 @@ import config from '../configs';
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: [true, 'Username không được để trống!']
+    required: [true, 'Username không được để trống!'],
   },
 
   phone: {
     type: Number,
-    required: [true, 'Phone không được để trống!' ],
+    required: [true, 'Phone không được để trống!'],
     default: 0,
   },
 
@@ -45,17 +45,17 @@ const userSchema = new mongoose.Schema({
   create_at: {
     type: Date,
     default: Date.now(),
-  }
+  },
 });
 
 userSchema.path('username').validate(function(value, done) {
-  userModels.findOne({username: value}, function(err, user) {
+  userModels.findOne({ username: value }, function(err, user) {
     if (err) return done(false);
     if (user) return done(false);
 
     done(true);
   });
-}, "User name này đã tồn tại!");
+}, 'User name này đã tồn tại!');
 
 
 userSchema.methods = {
@@ -65,9 +65,9 @@ userSchema.methods = {
    * @return {String} trả về một token duy nhất với thời gian live được quy định tại file config
    */
   getToken() {
-    return jsonToken.sign({ _id: this._id }, config.security.sessionSecret, {expiresIn: config.security.sessionExpiration});
-  }
-}
+    return jsonToken.sign({ _id: this._id }, config.security.sessionSecret, { expiresIn: config.security.sessionExpiration });
+  },
+};
 
-const userModels = mongoose.model('Users', userSchema); 
+const userModels = mongoose.model('Users', userSchema);
 export default userModels;

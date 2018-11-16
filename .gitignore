@@ -1,7 +1,9 @@
+# test output
 **/.DS_STORE
-npm-debug.log
-.imdone
+
+# build output
 dist
-coverage
+
+# dependencies
 node_modules
 .env

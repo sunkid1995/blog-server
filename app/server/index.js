@@ -28,7 +28,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(config.apiPrefix, router);
 
 app.listen(config.PORT, () => {
-  console.log(`Server runing is PORT: ${config.PORT} -> ENV: ${app.get('env')}`
+  console.log(`Server runing is PORT: ${config.PORT} -> ENV: ${app.get('env')}` // eslint-disable-line no-console
   );
 });
 

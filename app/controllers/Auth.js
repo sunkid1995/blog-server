@@ -2,7 +2,7 @@
 
 class Auth {
   home = (req, res) => {
-    res.send("<h1>Wellcome to web server 1</h1>");
+    res.send('<h1>Wellcome to web server 1</h1>');
   }
 }
 
