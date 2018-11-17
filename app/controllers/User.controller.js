@@ -124,5 +124,33 @@ class UserController {
       next(err);
     }
   }
+
+  /**
+   * xoá 1 user
+   * @function asyn-await
+   * @param {req} -> thông tin yêu cầu của client gửi nên server
+   * @param {res} -> trả lời của server -> cho client
+   * @param {next} -> callback argument to the middleware function
+   * @return {void} -> trả về thông báo xoá thành công
+   */
+
+  deleteUser = async (req, res, next) => {
+    const { userId } = req.query;
+    try {
+      const user = await UserModel.findByIdAndRemove({ _id: userId });
+      res.status(200).json({
+        success: true,
+        result: user,
+        message: `Delete user by userId: ${userId} successfully!`,
+      });
+    } catch (err) {
+      res.status(400).json({
+        success: false,
+        result: {},
+        message: `Error is: ${err}`,
+      });
+      next(err);
+    }
+  }
 }
 export default new UserController();
