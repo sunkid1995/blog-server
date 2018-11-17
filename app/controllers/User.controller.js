@@ -79,5 +79,50 @@ class UserController {
       next(err);
     }
   }
+
+  /**
+   * hiên thị tất cả các user đã được tạo
+   * @function asyn-await
+   * @param {req} -> thông tin yêu cầu của client gửi nên server
+   * @param {res} -> trả lời của server -> cho client
+   * @param {next} -> callback argument to the middleware function
+   * @return {void} -> trả về kết quả sau tìm kiếm
+   */
+
+  user = async (req, res, next) => {
+    // const { username, total } = req.body;
+    const { username, total } = req.query;
+    const parseTotal = parseInt(total);
+    const limit = parseTotal > 0 ? parseTotal : 10;
+
+    /**
+     * điều kiện tìm kiếm RegExp('i') cả chữ hoa và chữ thường
+     */
+    const findUser = {
+      username: new RegExp(username, 'i'),
+    };
+
+    try {
+      const user = await UserModel.find(findUser).limit(limit).sort({ username: 1 }).select({
+        username: 1,
+        password: 1,
+        phone: 1,
+      });
+      res.status(200).json({
+        success: true,
+        result: user,
+        total: parseTotal,
+        message: user.length > 0 ? 'Show all user successfully!' : 'Không tìm thấy kết quả!',
+      });
+    } catch (err) {
+      res.status(400).json({
+        success: false,
+        result: [],
+        message: `Error is: ${err}`,
+        total: 0,
+      });
+      next(err);
+    }
+  }
 }
 export default new UserController();
