@@ -6,12 +6,13 @@ import userController from '../controllers/User.controller';
 
 const router = new Router();
 /**
- * @description auth root
+ * @description Authentication
  */
 router.get('/', auth.home);
+router.post('/login', auth.login);
 
 /**
- * @description user router
+ * @description User router
  */
 router.get('/user', userController.user);
 router.post('/create_user', userController.createUser);
