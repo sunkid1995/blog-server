@@ -20,11 +20,10 @@ class UserController {
     });
 
     try {
-      const saveUser = await newUser.save();
-      const token = saveUser.getToken();
+      const user = await newUser.save();
       res.status(200).json({
         success: true,
-        result: { token, user: saveUser },
+        result: { user },
         message: 'Create user successfully!',
       });
     } catch (err) {
