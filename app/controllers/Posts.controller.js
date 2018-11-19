@@ -66,6 +66,29 @@ class PostControoler {
       next(err);
     }
   }
+
+  getAllPost = async (req, res, next) => {
+    const { page, perPage } = req.query;
+
+    try {
+      const posts = await PostsModels.find({})
+          .limit(parseInt(perPage))
+          .skip((parseInt(page) - 1) * parseInt(perPage));
+      res.status(200).json({
+        success: true,
+        result: posts,
+        total: posts.length,
+        message: 'Logs all posts successfully!',
+      });
+    } catch (err) {
+      res.status(400).json({
+        success: false,
+        result: [],
+        message: `Error is: ${err}`,
+      });
+      next(err);
+    }
+  }
 }
 
 export default new PostControoler();
