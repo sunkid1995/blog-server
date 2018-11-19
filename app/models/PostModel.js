@@ -19,6 +19,20 @@ const PostSchema = new Schema({
     ref: 'Users',
     required: true,
   },
+
+  created_at: {
+    type: Date,
+    default: Date.now(),
+  },
+
+});
+
+/**
+ * Set mặc định chữ cái đầu vào title là chữ in hoa
+ */
+
+PostSchema.path('title').set((value) => {
+  return value[0].toUpperCase() + value.slice(1);
 });
 
 const PostModels = mongoose.model('Posts', PostSchema);

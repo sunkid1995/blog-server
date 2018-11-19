@@ -28,5 +28,6 @@ router.delete('/delete_user', userController.deleteUser);
  */
 
 router.post('/create_post', verifyToken, postController.createPost);
+router.put('/update_post', verifyToken, postController.updatePost);
 
 export default router;
