@@ -40,6 +40,7 @@ class PostControoler {
 
   /**
    * cập nhật một bài viết
+   * @function asyn-await
    * @param {req} ->thông tin yêu cầu của client gửi nên server
    * @param {res} -> trả lời của server -> cho client
    * @param {next} -> callback argument to the middleware function
@@ -67,6 +68,15 @@ class PostControoler {
     }
   }
 
+  /**
+   * Hiển thị tất cả các bài viết ra -> phân trang = limit & skip
+   * @function asyn-await
+   * @param {req} ->thông tin yêu cầu của client gửi nên server
+   * @param {res} -> trả lời của server -> cho client
+   * @param {next} -> callback argument to the middleware function
+   * @return {void} -> trả về tất cả bài viết
+   */
+
   getAllPost = async (req, res, next) => {
     const { page, perPage } = req.query;
 
@@ -79,6 +89,46 @@ class PostControoler {
         result: posts,
         total: posts.length,
         message: 'Logs all posts successfully!',
+      });
+    } catch (err) {
+      res.status(400).json({
+        success: false,
+        result: [],
+        message: `Error is: ${err}`,
+      });
+      next(err);
+    }
+  }
+
+  /**
+   * tìm kiếm tất cả các bài viết ra
+   * @function asyn-await
+   * @param {req} ->thông tin yêu cầu của client gửi nên server
+   * @param {res} -> trả lời của server -> cho client
+   * @param {next} -> callback argument to the middleware function
+   * @return {void} -> trả về tất cả bài viết có keyword
+   */
+
+  search = async (req, res, next) => {
+    const { keyword, perpage } = req.query;
+
+    const keyWord = {
+      title: new RegExp(keyword, 'i'),
+    };
+
+    try {
+      const posts = await PostsModels.find(keyWord)
+          .limit(parseInt(perpage))
+          .select({
+            title: 1,
+            content: 1,
+            image: 1,
+          });
+      res.status(200).json({
+        success: true,
+        result: posts,
+        total: posts.length,
+        message: posts.length > 0 ? 'Search ok!' : 'Không có kết quả',
       });
     } catch (err) {
       res.status(400).json({
