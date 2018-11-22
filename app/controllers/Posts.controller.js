@@ -139,6 +139,34 @@ class PostControoler {
       next(err);
     }
   }
+
+  /**
+   * xoá 1 bài viết
+    * @function asyn-await
+   * @param {req} ->thông tin yêu cầu của client gửi nên server
+   * @param {res} -> trả lời của server -> cho client
+   * @param {next} -> callback argument to the middleware function
+   * @return {void} -> trả về thông báo xoá thành công
+   */
+
+   delete = async (req, res, next) => {
+     const { postId } = req.body;
+     try {
+       const post = await PostsModels.findByIdAndRemove({ _id: postId });
+       res.status(200).json({
+         success: true,
+         result: post,
+         message: `Delete post successfully ${postId}`,
+       });
+     } catch (err) {
+       res.status(400).json({
+         success: false,
+         result: {},
+         message: `Error is: ${err}`,
+       });
+       next(err);
+     }
+   }
 }
 
 export default new PostControoler();
