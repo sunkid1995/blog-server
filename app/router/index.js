@@ -38,5 +38,6 @@ router.get('/posts', verifyToken, postController.getAllPost);
  * @description Like router
  */
 router.post('/create_like_post', verifyToken, likeController.create);
+router.delete('/unlike_post', verifyToken, likeController.unlike);
 
 export default router;
