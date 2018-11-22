@@ -89,7 +89,6 @@ class UserController {
    */
 
   user = async (req, res, next) => {
-    // const { username, total } = req.body;
     const { username, total } = req.query;
     const parseTotal = parseInt(total);
     const limit = parseTotal > 0 ? parseTotal : 10;
