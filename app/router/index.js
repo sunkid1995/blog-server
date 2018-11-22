@@ -4,6 +4,7 @@ import { Router } from 'express';
 import auth from '../controllers/Auth';
 import userController from '../controllers/User.controller';
 import postController from '../controllers/Posts.controller';
+import likeController from '../controllers/Like.controller';
 
 // Access token in request header
 import verifyToken from '../accessToken';
@@ -32,5 +33,10 @@ router.put('/update_post', verifyToken, postController.updatePost);
 router.get('/search_post', verifyToken, postController.search);
 router.delete('/delete_post', verifyToken, postController.delete);
 router.get('/posts', verifyToken, postController.getAllPost);
+
+/**
+ * @description Like router
+ */
+router.post('/create_like_post', verifyToken, likeController.create);
 
 export default router;
