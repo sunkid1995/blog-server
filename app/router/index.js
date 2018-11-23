@@ -5,6 +5,7 @@ import auth from '../controllers/Auth';
 import userController from '../controllers/User.controller';
 import postController from '../controllers/Posts.controller';
 import likeController from '../controllers/Like.controller';
+import commentController from '../controllers/Comment.controller';
 
 // Access token in request header
 import verifyToken from '../accessToken';
@@ -40,5 +41,10 @@ router.get('/posts', verifyToken, postController.getAllPost);
 router.post('/create_like_post', verifyToken, likeController.create);
 router.delete('/unlike_post', verifyToken, likeController.unlike);
 router.get('/like_post', verifyToken, likeController.getLike);
+
+/**
+ * @description Comment router
+ */
+router.post('/create_comment_post', verifyToken, commentController.createComment);
 
 export default router;
