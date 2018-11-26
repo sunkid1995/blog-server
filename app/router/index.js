@@ -46,6 +46,7 @@ router.get('/like_post', verifyToken, likeController.getLike);
  * @description Comment router
  */
 router.post('/create_comment_post', verifyToken, commentController.createComment);
-router.put('/update_comment_post', commentController.updateComment);
+router.put('/update_comment_post', verifyToken, commentController.updateComment);
+router.delete('/delete_comment_post', verifyToken, commentController.deleteComment);
 
 export default router;
