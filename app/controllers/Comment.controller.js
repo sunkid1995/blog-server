@@ -1,8 +1,13 @@
 /**
  * Comment controller
  */
+import _ from 'lodash';
+
+import mongoose from 'mongoose';
+
 // Model
 import CommentModels from '../models/CommentModel';
+import UserModels from '../models/UserModel';
 
 class CommentController {
   /**
@@ -127,7 +132,59 @@ class CommentController {
          result: {},
          message: `Error is: ${err}`,
        });
+       next(err);
      }
    }
+
+   /**
+    * Hiển thị comment trong post
+    * @param {req} ->thông tin yêu cầu của client gửi nên server
+    * @param {res} -> trả lời của server -> cho client
+    * @param {next} -> callback argument to the middleware function
+    * @return {void} -> trả về các comment trong 1 bài viết
+    */
+
+    showComment = async (req, res, next) => {
+      const { postId, perPage } = req.query;
+
+      try {
+        const userIdCommentPost = [];
+        const comment = await CommentModels.find({ postId }).limit(parseInt(perPage));
+
+        /**
+         * Lấy ra id của user comment trong bài viết để lấy thông tin user đấy
+         * format định dạng id về kiểu ObjectId
+         */
+
+        _.each(comment, (item) => {
+          const id = mongoose.Types.ObjectId(item.userId); // eslint-disable-line
+          userIdCommentPost.push(id);
+        });
+
+        if (userIdCommentPost) {
+          /**
+          * tìm kiếm user đã comment bài viết với 1 arr id
+          */
+          const userCommentPost = await UserModels.find({ _id: { $in: userIdCommentPost } }).select({
+            username: 1,
+            email: 1,
+          });
+
+          return res.status(200).json({
+            success: true,
+            result: comment,
+            user: userCommentPost,
+            message: 'Get comment ok!',
+          });
+        }
+      } catch (err) {
+        res.status(400).json({
+          success: false,
+          result: {},
+          message: `Error is: ${err}`,
+        });
+        next(err);
+      }
+    }
 }
 export default new CommentController;
