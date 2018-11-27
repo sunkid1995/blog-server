@@ -1,13 +1,8 @@
 /**
  * Comment controller
  */
-import _ from 'lodash';
-
-import mongoose from 'mongoose';
-
 // Model
 import CommentModels from '../models/CommentModel';
-import UserModels from '../models/UserModel';
 
 class CommentController {
   /**
@@ -144,47 +139,49 @@ class CommentController {
     * @return {void} -> trả về các comment trong 1 bài viết
     */
 
-    showComment = async (req, res, next) => {
-      const { postId, perPage } = req.query;
+  showComment = async (req, res, next) => {
+    const { postId, perPage } = req.query;
 
-      try {
-        const userIdCommentPost = [];
-        const comment = await CommentModels.find({ postId }).limit(parseInt(perPage));
+    try {
+      /**
+       * điều kiện để tìm kiếm
+       * path: 'userId': tìm kiếm user comment bài viết qua document userId trong commentModels
+       * select: chỉ lấy ra những thứ mình muốn username, email, phone
+       */
 
-        /**
-         * Lấy ra id của user comment trong bài viết để lấy thông tin user đấy
-         * format định dạng id về kiểu ObjectId
-         */
+      const populateQuery = [
+        { path: 'userId',
+          select: { username: 1, email: 1, phone: 1 },
+        },
+        { path: 'postId',
+          select: { title: 1, content: 1 },
+        },
+      ];
 
-        _.each(comment, (item) => {
-          const id = mongoose.Types.ObjectId(item.userId); // eslint-disable-line
-          userIdCommentPost.push(id);
-        });
+      /**
+       * populate: dược mongoose cung cấp để ta truy vấn data ở các collection khác
+       * ở đây t truy vấn và lấy ra thông tin của 'user' + 'post' bằng điều kiện populateQuery
+       * ở trên -  path: 'userId' - path: 'postId'
+       * mà ngưởi dùng đã comment
+       */
+      const comment = await CommentModels.find({ postId })
+          .populate(populateQuery)
+          .limit(parseInt(perPage));
 
-        if (userIdCommentPost) {
-          /**
-          * tìm kiếm user đã comment bài viết với 1 arr id
-          */
-          const userCommentPost = await UserModels.find({ _id: { $in: userIdCommentPost } }).select({
-            username: 1,
-            email: 1,
-          });
-
-          return res.status(200).json({
-            success: true,
-            result: comment,
-            user: userCommentPost,
-            message: 'Get comment ok!',
-          });
-        }
-      } catch (err) {
-        res.status(400).json({
-          success: false,
-          result: {},
-          message: `Error is: ${err}`,
-        });
-        next(err);
-      }
+      res.status(200).json({
+        success: false,
+        result: comment,
+        message: 'Get comment ok!',
+        perpage: perPage,
+      });
+    } catch (err) {
+      res.status(400).json({
+        success: false,
+        result: {},
+        message: `Error is: ${err}`,
+      });
+      next(err);
     }
+  }
 }
 export default new CommentController;
