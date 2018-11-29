@@ -3,12 +3,8 @@
  */
 import _ from 'lodash';
 
-import mongoose from 'mongoose';
-
 // Models
 import LikeModels from '../models/LikeModel';
-import UserModels from '../models/UserModel';
-
 
 class LikeController {
   /**
@@ -84,35 +80,34 @@ class LikeController {
 
    getLike = async (req, res, next) => {
      const { postId } = req.query;
+
      try {
-       const userIdLikePost = [];
-       const like = await LikeModels.find({ postId });
+       /**
+       * điều kiện để tìm kiếm
+       * path: 'userId': tìm kiếm user like bài viết qua document userId trong LikeModels
+       * select: chỉ lấy ra những thứ mình muốn username, email
+       */
+
+       const populateQuery = [
+         { path: 'userId',
+           select: { username: 1, email: 1 },
+         },
+       ];
 
        /**
-        * lấy ra id của user like bài viết để lấy thông tin user đấy
-        * format định dạng id về kiểu ObjectId
-        */
+       * populate: dược mongoose cung cấp để ta truy vấn data ở các collection khác
+       * ở đây t truy vấn và lấy ra thông tin của 'user bằng điều kiện populateQuery
+       * ở trên -  path: 'userId'
+       * lấy ra ngưởi dùng đã like bài viết
+       */
 
-       _.each(like, (item) => {
-         const id = mongoose.Types.ObjectId(item.userId); // eslint-disable-line
-         userIdLikePost.push(id);
+       const like = await LikeModels.find({ postId }).populate(populateQuery);
+       res.status(200).json({
+         success: true,
+         result: like,
+         like: like.length,
+         message: 'Get like succesfully!',
        });
-
-       if (userIdLikePost) {
-         /**
-          * tìm kiếm user đã like bài viết với 1 arr id
-          */
-         const userLikepost = await UserModels.find({ _id: { $in: userIdLikePost } }).select({
-           username: 1,
-           email: 1,
-         });
-         return res.status(200).json({
-           success: true,
-           user_like: userLikepost,
-           total_like: like.length,
-           message: 'Get like ok!',
-         });
-       }
      } catch (err) {
        res.status(400).json({
          success: false,
