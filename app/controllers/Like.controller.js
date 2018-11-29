@@ -50,15 +50,34 @@ class LikeController {
    */
 
   unlike = async (req, res, next) => {
-    const { likeId } = req.body;
+    const { userId, postId, likeId } = req.body;
+
+    /**
+     * tìm like theo likeId: _id
+     */
 
     try {
-      const like = await LikeModels.findByIdAndRemove({ _id: likeId });
-      res.status(200).json({
-        success: true,
-        result: like,
-        message: 'Unlike ok!',
-      });
+      const likes = await LikeModels.findById({ _id: likeId });
+
+      /**
+       * điều kiện để unlike là: userid và postId ở trong likes phải bằng userid và postId của client req nên
+       * mới cho xoá
+       */
+
+      if (userId == likes.userId && postId == likes.postId && likeId == likes._id) {
+        const like = await LikeModels.findByIdAndRemove({ _id: likeId });
+        return res.status(200).json({
+          success: true,
+          result: like,
+          message: 'Unlike ok!',
+        });
+      } else {
+        return res.status(401).json({
+          success: false,
+          result: {},
+          message: 'Unlike fail',
+        });
+      }
     } catch (err) {
       res.status(400).json({
         success: false,
