@@ -81,19 +81,26 @@ class PostControoler {
     const { page, perPage } = req.query;
 
     try {
+      const populateQuery = [
+        { path: 'authorId',
+          select: { username: 1, email: 1 },
+        },
+      ];
+
       const posts = await PostsModels.find({})
+          .populate(populateQuery)
           .limit(parseInt(perPage))
           .skip((parseInt(page) - 1) * parseInt(perPage));
       res.status(200).json({
         success: true,
-        result: posts,
+        data: posts,
         total: posts.length,
         message: 'Logs all posts successfully!',
       });
     } catch (err) {
       res.status(400).json({
         success: false,
-        result: [],
+        data: [],
         message: `Error is: ${err}`,
       });
       next(err);
