@@ -10,7 +10,7 @@ const app = express();
 
 /**
  * Bật CORS. Nếu không dùng khi client request lên sẽ lỗi 'No Acccess Origin'
-  *Tham khảo: ttps://github.com/expressjs/cors
+  *Tham khảo: https://github.com/expressjs/cors
  */
 app.use(cors());
 

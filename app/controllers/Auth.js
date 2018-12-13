@@ -24,7 +24,7 @@ class Auth {
        if (!user || username !== user.username || password !== user.password) {
          return res.status(403).json({
            success: false,
-           result: {},
+           data: {},
            message: 'Sai thông tin đăng nhập!',
          });
        }
@@ -35,18 +35,19 @@ class Auth {
              username: 1,
              password: 1,
              token: 1,
+             email: 1,
            })
            .exec((err, user) => {
              if (err) {
                return res.status(400).json({
                  success: false,
-                 result: {},
+                 data: {},
                  message: 'Login faild !',
                });
              } else {
                return res.status(200).json({
                  success: true,
-                 result: { user },
+                 data: user,
                  message: 'Login successfully !',
                });
              }

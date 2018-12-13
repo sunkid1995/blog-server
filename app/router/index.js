@@ -40,7 +40,8 @@ router.get('/posts', verifyToken, postController.getAllPost);
  */
 router.post('/create_like_post', verifyToken, likeController.create);
 router.delete('/unlike_post', verifyToken, likeController.unlike);
-router.get('/like_post', verifyToken, likeController.getLike);
+router.get('/get_like_post', verifyToken, likeController.getLike);
+router.get('/like', verifyToken, likeController.getAllLike);
 
 /**
  * @description Comment router
