@@ -123,17 +123,64 @@ class LikeController {
        const like = await LikeModels.find({ postId }).populate(populateQuery);
        res.status(200).json({
          success: true,
-         result: like,
+         data: like,
          like: like.length,
          message: 'Get like succesfully!',
        });
      } catch (err) {
        res.status(400).json({
          success: false,
-         result: [],
+         data: [],
          message: `Error is: ${err}`,
        });
        next(err);
+     }
+   }
+
+   /**
+   * Hiển thị tất cả lượt like
+   * @function async-await
+   * @param {req} ->thông tin yêu cầu của client gửi nên server
+   * @param {res} -> trả lời của server -> cho client
+   * @param {next} -> callback argument to the middleware function
+   * @return {void} -> trả về thông tin số lượt like
+   */
+
+   getAllLike = async (req, res, next) => {
+     const { page, perPage } = req.query;
+
+     try {
+       /**
+       * populate: dược mongoose cung cấp để ta truy vấn data ở các collection khác
+       * ở đây t truy vấn và lấy ra thông tin của 'user bằng điều kiện populateQuery
+       * ở trên -  path: 'userId'
+       * lấy ra ngưởi dùng đã like bài viết
+       */
+
+       const populateQuery = [
+         { path: 'postId',
+           select: { title: 1 },
+         },
+         //  { path: 'userId',
+         //    select: { username: 1 },
+         //  },
+       ];
+
+       const likes = await LikeModels.find({})
+           .populate(populateQuery)
+           .limit(parseInt(perPage))
+           .skip((parseInt(page) - 1) * parseInt(page));
+       res.status(200).json({
+         success: true,
+         data: likes,
+         message: 'Get like succesfully!',
+       });
+     } catch (err) {
+       res.status(400).json({
+         success: false,
+         data: [],
+         message: `Error is: ${err}`,
+       });
      }
    }
 }
