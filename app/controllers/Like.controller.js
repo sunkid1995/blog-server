@@ -17,24 +17,26 @@ class LikeController {
    */
 
   create = async (req, res, next) => {
-    const { userId, postId } = req.body;
+    const { userId, postId, like } = req.body;
 
     const newLike = new LikeModels({
-      userId, postId,
+      userId, postId, like,
     });
 
     try {
       const like = await newLike.save();
       res.status(200).json({
         success: true,
-        result: like,
-        message: 'Like ok!',
+        data: like,
+        error: [],
       });
     } catch (err) {
       res.status(400).json({
         success: false,
-        result: {},
-        message: `Error is: ${err}`,
+        data: {},
+        error: [
+          { message: `Error is: ${err}` },
+        ],
       });
       next(err);
     }
@@ -68,21 +70,25 @@ class LikeController {
         const like = await LikeModels.findByIdAndRemove({ _id: likeId });
         return res.status(200).json({
           success: true,
-          result: like,
-          message: 'Unlike ok!',
+          data: like,
+          error: [],
         });
       } else {
         return res.status(401).json({
           success: false,
-          result: {},
-          message: 'Unlike fail',
+          data: {},
+          error: [
+            { message: 'Unlike fail!' },
+          ],
         });
       }
     } catch (err) {
       res.status(400).json({
         success: false,
-        result: {},
-        message: `Error is: ${err}`,
+        data: {},
+        error: [
+          { message: `Error is: ${err}` },
+        ],
       });
       next(err);
     }
