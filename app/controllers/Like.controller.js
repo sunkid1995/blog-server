@@ -17,19 +17,33 @@ class LikeController {
    */
 
   create = async (req, res, next) => {
-    const { userId, postId, like } = req.body;
+    const { userId, postId, totalLike } = req.body;
 
     const newLike = new LikeModels({
-      userId, postId, like,
+      userId, postId, totalLike,
     });
 
     try {
-      const like = await newLike.save();
-      res.status(200).json({
-        success: true,
-        data: like,
-        error: [],
-      });
+      const findLike = await LikeModels.findOne({ postId });
+
+      if (findLike !== null) {
+        const optipons = { new: true };
+
+        const updateLike = await LikeModels.findOneAndUpdate({ postId }, { $set: { totalLike }, $push: { userId } }, optipons);
+
+        return res.status(200).json({
+          success: true,
+          data: updateLike,
+          error: [],
+        });
+      } else {
+        const like = await newLike.save();
+        return res.status(200).json({
+          success: true,
+          data: like,
+          error: [],
+        });
+      }
     } catch (err) {
       res.status(400).json({
         success: false,
@@ -52,22 +66,24 @@ class LikeController {
    */
 
   unlike = async (req, res, next) => {
-    const { userId, postId, likeId } = req.body;
+    const { userId, postId, totalLike } = req.body;
 
     /**
      * tìm like theo likeId: _id
      */
 
     try {
-      const likes = await LikeModels.findById({ _id: likeId });
+      const likes = await LikeModels.findOne({ postId });
 
       /**
        * điều kiện để unlike là: userid và postId ở trong likes phải bằng userid và postId của client req nên
        * mới cho xoá
        */
 
-      if (userId == likes.userId && postId == likes.postId && likeId == likes._id) {
-        const like = await LikeModels.findByIdAndRemove({ _id: likeId });
+      if (postId == likes.postId) {
+        const optipons = { new: true };
+
+        const like = await LikeModels.findOneAndUpdate({ postId }, { $set: { totalLike }, $pull: { userId } }, optipons );
         return res.status(200).json({
           success: true,
           data: like,
@@ -167,9 +183,9 @@ class LikeController {
          { path: 'postId',
            select: { title: 1 },
          },
-         //  { path: 'userId',
-         //    select: { username: 1 },
-         //  },
+         { path: 'userId',
+           select: { username: 1 },
+         },
        ];
 
        const likes = await LikeModels.find({})

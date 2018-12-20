@@ -15,6 +15,7 @@ class PostControoler {
    */
 
   createPost = async (req, res, next) => {
+    console.log(req.file);
     const { title, image, content, authorId } = req.body;
 
     const newPost = new PostsModels({
@@ -25,14 +26,16 @@ class PostControoler {
       const savePost = await newPost.save();
       res.status(200).json({
         success: true,
-        post: savePost,
-        message: 'Create post successfully!',
+        data: savePost,
+        error: [],
       });
     } catch (err) {
       res.status(400).json({
         success: false,
         post: {},
-        message: `Error is: ${err}`,
+        error: [{
+          message: `Error is: ${err}`,
+        }],
       });
       next(err);
     }
