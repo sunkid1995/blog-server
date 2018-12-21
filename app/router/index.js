@@ -10,6 +10,9 @@ import commentController from '../controllers/Comment.controller';
 // Access token in request header
 import verifyToken from '../accessToken';
 
+//
+import multerImage from '../multerImage';
+
 const router = new Router();
 /**
  * @description Authentication
@@ -29,7 +32,7 @@ router.delete('/delete_user', userController.deleteUser);
  * @description Post router
  */
 
-router.post('/create_post', verifyToken, postController.createPost);
+router.post('/create_post', verifyToken, multerImage.single('image'), postController.createPost);
 router.put('/update_post', verifyToken, postController.updatePost);
 router.get('/search_post', verifyToken, postController.search);
 router.delete('/delete_post', verifyToken, postController.delete);

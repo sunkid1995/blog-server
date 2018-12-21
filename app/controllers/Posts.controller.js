@@ -15,8 +15,8 @@ class PostControoler {
    */
 
   createPost = async (req, res, next) => {
-    console.log(req.file);
-    const { title, image, content, authorId } = req.body;
+    const { title, content, authorId } = req.body;
+    const image = req.file !== undefined ? req.file.path : null;
 
     const newPost = new PostsModels({
       title, image, content, authorId,

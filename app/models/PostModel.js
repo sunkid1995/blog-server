@@ -4,11 +4,12 @@ const Schema = mongoose.Schema;
 const PostSchema = new Schema({
   title: {
     type: String,
-    required: false,
+    required: true,
   },
 
   image: {
     type: String,
+    required: false,
   },
 
   content: {
@@ -26,6 +27,8 @@ const PostSchema = new Schema({
     default: Date.now(),
   },
 
+}, {
+  timestamps: true,
 });
 
 /**
