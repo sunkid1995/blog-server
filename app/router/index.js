@@ -53,5 +53,6 @@ router.post('/create_comment_post', verifyToken, commentController.createComment
 router.put('/update_comment_post', verifyToken, commentController.updateComment);
 router.delete('/delete_comment_post', verifyToken, commentController.deleteComment);
 router.get('/get_comment_post', verifyToken, commentController.showComment);
+router.get('/comment', verifyToken, commentController.comment);
 
 export default router;

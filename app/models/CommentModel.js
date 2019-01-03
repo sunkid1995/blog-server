@@ -24,12 +24,7 @@ const CommentSchema = new Schema({
     default: null,
   },
 
-  created_at: {
-    type: Date,
-    default: Date.now(),
-  },
-
-});
+}, { timestamps: true });
 
 const CommentModels = mongoose.model('Comments', CommentSchema);
 
