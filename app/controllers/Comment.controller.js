@@ -183,5 +183,46 @@ class CommentController {
       next(err);
     }
   }
+
+  /**
+   * Hiển thị tất cả comment
+   * @function async-await
+   * @param {req} ->thông tin yêu cầu của client gửi nên server
+   * @param {res} -> trả lời của server -> cho client
+   * @param {next} -> callback argument to the middleware function
+   * @return {void} -> trả về các comment
+   */
+
+  comment = async (req, res, next) => {
+    const { page, perPage } = req.query;
+
+    try {
+      const populateQuery = [
+        { path: 'userId',
+          select: { _id: 1, username: 1 },
+        },
+        { path: 'postId',
+          select: { _id: 1 },
+        },
+      ];
+      const comment = await CommentModels.find({})
+          .populate(populateQuery)
+          .limit(parseInt(perPage))
+          .skip((parseInt(page) - 1) * parseInt(page));
+      res.status(200).json({
+        success: true,
+        data: comment,
+        error: [],
+      });
+    } catch (err) {
+      res.status(400).json({
+        success: false,
+        data: [],
+        error: [
+          { message: `Error is: ${err}` },
+        ],
+      });
+    }
+  }
 }
 export default new CommentController;
