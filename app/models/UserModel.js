@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 // token
-import jsonToken from 'jsonwebtoken';
+// import jsonToken from 'jsonwebtoken';
 
-// configs
-import config from '../configs';
+// // configs
+// import config from '../configs';
 
 
 const userSchema = new mongoose.Schema({
@@ -15,7 +15,6 @@ const userSchema = new mongoose.Schema({
   phone: {
     type: Number,
     required: [true, 'Phone không được để trống!'],
-    default: 0,
   },
 
   email: {
@@ -35,11 +34,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true],
-  },
-
-  token: {
-    type: String,
-    default: null,
+    minlength: [6, 'Password phải nhiều hơn 6 kí tự!'],
   },
 
   create_at: {
@@ -48,26 +43,26 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.path('username').validate(function(value, done) {
-  userModels.findOne({ username: value }, function(err, user) {
-    if (err) return done(false);
-    if (user) return done(false);
+// userSchema.path('username').validate(function(value, done) {
+//   userModels.findOne({ username: value }, function(err, user) {
+//     if (err) return done(false);
+//     if (user) return done(false);
 
-    done(true);
-  });
-}, 'User name này đã tồn tại!');
+//     done(true);
+//   });
+// }, 'User name này đã tồn tại!');
 
 
-userSchema.methods = {
-  /**
-   * (JWT) Tạo một JSON web token để xác thực thông tin các request
-   * @method
-   * @return {String} trả về một token duy nhất với thời gian live được quy định tại file config
-   */
-  getToken() {
-    return jsonToken.sign({ _id: this._id }, config.security.sessionSecret, { expiresIn: config.security.sessionExpiration });
-  },
-};
+// userSchema.methods = {
+//   /**
+//    * (JWT) Tạo một JSON web token để xác thực thông tin các request
+//    * @method
+//    * @return {String} trả về một token duy nhất với thời gian live được quy định tại file config
+//    */
+//   getToken() {
+//     return jsonToken.sign({ _id: this._id }, config.security.sessionSecret, { expiresIn: config.security.sessionExpiration });
+//   },
+// };
 
 const userModels = mongoose.model('Users', userSchema);
 export default userModels;

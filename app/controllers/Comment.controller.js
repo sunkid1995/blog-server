@@ -3,6 +3,7 @@
  */
 // Model
 import CommentModels from '../models/CommentModel';
+import PostModels from '../models/PostModel';
 
 class CommentController {
   /**
@@ -18,11 +19,14 @@ class CommentController {
     const { userId, postId, comment } = req.body;
 
     const newComment = new CommentModels({
-      userId, postId, comment,
+      userId, postId, content: comment,
     });
 
     try {
       const comment = await newComment.save();
+      const post = await PostModels.findOne({ _id: postId });
+      post.comments = [...post.comments, comment._id];
+      const newPost = await PostModels.findByIdAndUpdate(postId, post, { new: true });
       res.status(200).json({
         success: true,
         result: comment,
@@ -203,6 +207,7 @@ class CommentController {
         },
         { path: 'postId',
           select: { _id: 1 },
+          options: { limit: 1, skip: 0 },
         },
       ];
       const comment = await CommentModels.find({})

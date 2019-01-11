@@ -27,6 +27,13 @@ const PostSchema = new Schema({
     default: Date.now(),
   },
 
+  comments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Comments',
+    },
+  ],
+
 }, {
   timestamps: true,
 });

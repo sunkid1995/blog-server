@@ -19,7 +19,7 @@ const CommentSchema = new Schema({
     required: true,
   },
 
-  comment: {
+  content: {
     type: String,
     default: null,
   },

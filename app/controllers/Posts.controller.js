@@ -88,6 +88,10 @@ class PostControoler {
         { path: 'authorId',
           select: { username: 1, email: 1 },
         },
+        { path: 'comments',
+          select: { _id: 1, content: 1 },
+          options: { limit: 10, skip: 0 },
+        },
       ];
 
       const posts = await PostsModels.find({})
