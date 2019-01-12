@@ -37,11 +37,7 @@ const userSchema = new mongoose.Schema({
     minlength: [6, 'Password phải nhiều hơn 6 kí tự!'],
   },
 
-  create_at: {
-    type: Date,
-    default: Date.now(),
-  },
-});
+}, { timestamps: true });
 
 // userSchema.path('username').validate(function(value, done) {
 //   userModels.findOne({ username: value }, function(err, user) {

@@ -24,14 +24,18 @@ class CommentController {
 
     try {
       const comment = await newComment.save();
-      const post = await PostModels.findOne({ _id: postId });
-      post.comments = [...post.comments, comment._id];
-      const newPost = await PostModels.findByIdAndUpdate(postId, post, { new: true });
-      res.status(200).json({
-        success: true,
-        result: comment,
-        message: 'Comment ok!',
-      });
+
+      if (comment) {
+        const options = { new: true };
+        const comments = await PostModels.findByIdAndUpdate(postId,
+            { $push: { comments: { comment: comment._id, user: userId } } }
+            , options);
+        res.status(200).json({
+          success: true,
+          result: comments,
+          message: 'Comment ok!',
+        });
+      }
     } catch (err) {
       res.status(400).json({
         success: false,

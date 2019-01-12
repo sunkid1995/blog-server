@@ -16,18 +16,13 @@ const likeSchema = new Schema({
     required: true,
   },
 
-  created_at: {
-    type: Date,
-    default: Date.now(),
-  },
-
   totalLike: {
     type: Number,
     default: 0,
     required: true,
   },
 
-});
+}, { timestamps: true });
 
 const LikeModels = mongoose.model('Likes', likeSchema);
 
