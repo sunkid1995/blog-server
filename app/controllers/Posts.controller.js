@@ -1,6 +1,8 @@
 /**
  * posts controller
  */
+// import _ from 'lodash';
+
 // Models
 import PostsModels from '../models/PostModel';
 
@@ -88,9 +90,21 @@ class PostControoler {
         { path: 'authorId',
           select: { username: 1, email: 1 },
         },
+        // { path: 'comments',
+        // select: { _id: 1, content: 1, userId: 1 },
+        // },
+
+        { path: 'comments.user',
+          select: { _id: 1, username: 1 },
+        },
+        { path: 'comments.comment',
+          select: { _id: 1, content: 1, userId: 1 },
+          options: { limit: 10, skip: 0 },
+        },
       ];
 
       const posts = await PostsModels.find({})
+          .sort({ createdAt: -1 })
           .populate(populateQuery)
           .limit(parseInt(perPage))
           .skip((parseInt(page) - 1) * parseInt(perPage));

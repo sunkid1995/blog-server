@@ -8,3 +8,6 @@ dist
 node_modules
 .env
 package-lock.json
+
+# setting
+settings.json
