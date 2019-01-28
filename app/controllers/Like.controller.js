@@ -5,6 +5,7 @@ import _ from 'lodash';
 
 // Models
 import LikeModels from '../models/LikeModel';
+import PostModel from '../models/PostModel';
 
 class LikeController {
   /**
@@ -20,20 +21,19 @@ class LikeController {
     const { userId, postId, totalLike } = req.body;
 
     const newLike = new LikeModels({
-      userId, postId, totalLike,
+      user: userId, post: postId, totalLike,
     });
 
     try {
-      const findLike = await LikeModels.findOne({ postId });
+      const like = await newLike.save();
 
-      if (findLike !== null) {
+      if (like) {
         const optipons = { new: true };
-
-        const updateLike = await LikeModels.findOneAndUpdate({ postId }, { $set: { totalLike }, $push: { userId } }, optipons);
+        const likes = await PostModel.findByIdAndUpdate(postId, { $push: { likes: like.user } }, optipons);
 
         return res.status(200).json({
           success: true,
-          data: updateLike,
+          data: likes,
           error: [],
         });
       } else {
@@ -66,31 +66,24 @@ class LikeController {
    */
 
   unlike = async (req, res, next) => {
-    const { userId, postId, totalLike } = req.body;
-
-    /**
-     * tìm like theo likeId: _id
-     */
+    const { userId, postId } = req.body;
 
     try {
-      const likes = await LikeModels.findOne({ postId });
-
       /**
        * điều kiện để unlike là: userid và postId ở trong likes phải bằng userid và postId của client req nên
        * mới cho xoá
        */
 
-      if (postId == likes.postId) {
-        const optipons = { new: true };
-
-        const like = await LikeModels.findOneAndUpdate({ postId }, { $set: { totalLike }, $pull: { userId } }, optipons );
+      if (postId) {
+        await PostModel.findByIdAndUpdate(postId, { $pull: { likes: userId } }, { new: true });
+        const like = await LikeModels.findOneAndRemove({ post: postId });
         return res.status(200).json({
           success: true,
           data: like,
           error: [],
         });
       } else {
-        return res.status(401).json({
+        return res.status(406).json({
           success: false,
           data: {},
           error: [

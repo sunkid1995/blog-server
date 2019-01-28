@@ -17,11 +17,11 @@ class PostControoler {
    */
 
   createPost = async (req, res, next) => {
-    const { title, content, authorId } = req.body;
+    const { title, content, user_id: author } = req.body;
     const image = req.file !== undefined ? req.file.path : null;
 
     const newPost = new PostsModels({
-      title, image, content, authorId,
+      title, image, content, author,
     });
 
     try {
@@ -87,21 +87,20 @@ class PostControoler {
 
     try {
       const populateQuery = [
-        { path: 'authorId',
+        { path: 'author',
           select: { username: 1, email: 1 },
         },
-        // { path: 'comments',
-        // select: { _id: 1, content: 1, userId: 1 },
-        // },
-
         { path: 'comments.user',
           select: { _id: 1, username: 1 },
         },
         { path: 'comments.comment',
-          select: { _id: 1, content: 1, userId: 1 },
+          select: { _id: 1, content: 1, createdAt: 1 },
           options: { limit: 10, skip: 0 },
         },
       ];
+      // const postId = '5c3c088abdf80a0f7fdd07ec';
+      // const fillter = postId !== undefined ? { _id: postId } : {};
+      // console.log(fillter, 'fillter');
 
       const posts = await PostsModels.find({})
           .sort({ createdAt: -1 })

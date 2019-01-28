@@ -108,7 +108,7 @@ class Auth {
      UserModels.findOne({ username })
          .exec()
          .then((user) => {
-           if (user.length < 1) {
+           if (!user) {
              return res.status(401).json({
                success: false,
                data: {},

@@ -4,13 +4,13 @@ const Schema = mongoose.Schema;
 
 const likeSchema = new Schema({
 
-  userId: [{
+  user: {
     type: Schema.Types.ObjectId,
     ref: 'Users',
     required: true,
-  }],
+  },
 
-  postId: {
+  post: {
     type: Schema.Types.ObjectId,
     ref: 'Posts',
     required: true,
