@@ -37,6 +37,11 @@ const userSchema = new mongoose.Schema({
     minlength: [6, 'Password phải nhiều hơn 6 kí tự!'],
   },
 
+  token: {
+    type: String,
+    default: null,
+  },
+
 }, { timestamps: true });
 
 // userSchema.path('username').validate(function(value, done) {
