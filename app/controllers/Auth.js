@@ -39,61 +39,46 @@ class Auth {
    * @return {void} -> trả về thông báo đăng nhập thành công và user & token
    */
 
-   signup = (req, res, next) => {
+   signup = async (req, res, next) => {
      const { username, phone, email, password } = req.body;
-     UserModels.find({ username })
-         .exec()
-         .then((user) => {
-           if (user.length >= 1) {
-             return res.status(403).json({
-               success: false,
-               data: {},
-               error: [
-                 { message: 'Username đã tồn tại!' },
-               ],
-             });
-           } else {
-             bcrypt.hash(password, 10, (err, hashPassword) => {
-               if (err) {
-                 return res.status(500).json({
-                   success: false,
-                   data: {},
-                   error: [
-                     { message: `${err}` },
-                   ],
-                 });
-               } else {
-                 const user = new UserModels({
-                   username, phone, email, password: hashPassword,
-                 });
-                 user
-                     .save().then((result) => {
-                       return res.status(203).json({
-                         success: true,
-                         data: result,
-                         error: [],
-                       });
-                     }).catch((err) => {
-                       return res.status(404).json({
-                         success: false,
-                         data: {},
-                         error: [
-                           { message: `${err}` },
-                         ],
-                       });
-                     });
-               }
-             });
-           }
-         }).catch((err) => {
-           res.status(401).json({
-             success: false,
-             data: {},
-             error: [
-               { message: `${err}` },
-             ],
-           });
+
+     try {
+       const checkedUser = await UserModels.find({ username });
+       if (_.isEmpty(checkedUser)) {
+         const hashPassWord = await bcrypt.hash(password, 10);
+
+         const User = new UserModels({
+           username,
+           phone,
+           email,
+           password: hashPassWord,
          });
+
+         const newUser = await User.save();
+
+         return res.status(200).json({
+           success: true,
+           data: newUser,
+           error: [],
+         });
+       }
+
+       return res.status(403).json({
+         success: false,
+         data: {},
+         error: [
+           { message: 'Username đã tồn tại!' },
+         ],
+       });
+     } catch (err) {
+       return res.status(401).json({
+         success: false,
+         data: [],
+         error: [
+           { message: err.errmsg || err.message },
+         ],
+       });
+     }
    }
 
    /**
