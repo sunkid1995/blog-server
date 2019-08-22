@@ -1,4 +1,5 @@
 /* auth controllers */
+import _ from 'lodash';
 
 // Models
 import UserModels from '../models/UserModel';
@@ -103,66 +104,56 @@ class Auth {
    * @return {void} -> trả về thông báo đăng nhập thành công và user & token
    */
 
-   signin = (req, res, next) => {
+   signin = async (req, res, next) => {
      const { username, password } = req.body;
-     UserModels.findOne({ username })
-         .exec()
-         .then((user) => {
-           if (!user) {
-             return res.status(401).json({
-               success: false,
-               data: {},
-               error: [
-                 { message: `Username ${username} không tồn tại tồn tại!` },
-               ],
-             });
-           }
-           bcrypt.compare(password, user.password, (err, result) => {
-             if (err) {
-               return res.status(500).json({
-                 success: false,
-                 data: {},
-                 error: [
-                   { message: `Error is: ${err}` },
-                 ],
-               });
-             }
-             if (result) {
-               const token = jwt.sign(
-                   {
-                     username: user.username, _id: user._id,
-                   },
-                   config.security.sessionSecret,
-                   {
-                     expiresIn: '1h',
-                   }
-               );
 
-               user.token = token;
-               return res.status(201).json({
-                 success: true,
-                 data: user,
-                 error: [],
-               });
-             }
-             res.status(401).json({
-               success: false,
-               data: {},
-               error: [
-                 { message: 'Tài khoản hoặc mật khẩu không chính xác!' },
-               ],
-             });
-           });
-         })
-         .catch((err) => {
-           res.status(401).json({
-             success: false,
-             data: {},
-             error: [
-               { message: `${err}` },
-             ],
-           });
+     try {
+       const user = await UserModels.findOne({ username });
+       if (_.isEmpty(user)) {
+         return res.status(401).json({
+           success: false,
+           data: {},
+           error: [
+             { message: `Username ${username} không tồn tại tồn tại!` },
+           ],
          });
+       }
+
+       const checkedPassWord = await bcrypt.compare(password, user.password);
+
+       if (checkedPassWord) {
+         const isUser = {
+           username: user.username,
+           _id: user._id,
+         };
+
+         const token = jwt.sign(isUser, config.security.sessionSecret, { expiresIn: '1h' });
+
+         const newUser = await UserModels.findOneAndUpdate({ _id: user._id }, { $set: { 'token': token } });
+
+         return res.status(200).json({
+           success: true,
+           data: newUser,
+           error: [],
+         });
+       }
+
+       return res.status(422).json({
+         success: false,
+         data: {},
+         error: [
+           { message: 'Tài khoản hoặc mật khẩu không chính xác!' },
+         ],
+       });
+     } catch (err) {
+       return res.status(401).json({
+         success: false,
+         data: {},
+         error: [
+           { message: `${err}` },
+         ],
+       });
+     }
    }
 }
 
